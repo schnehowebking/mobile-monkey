@@ -1,7 +1,6 @@
 '''
 api commands from python to gain information about android avds
 '''
-import xml.etree.ElementTree as ET
 import subprocess
 import shlex
 from typing import List, Union
@@ -9,6 +8,8 @@ import config_reader as config
 import util
 from emulator import Emulator
 from apk import Apk
+import defusedxml.ElementTree
+
 ADB = config.adb
 
 PRINT_FLAG = True
@@ -41,7 +42,7 @@ def overwrite_android_manifest():
     file_address = config.APK_FULL_PATH.split(
         '.apk')[0] + '/AndroidManifest.xml'
 
-    tree = ET.parse(file_address)
+    tree = defusedxml.ElementTree.parse(file_address)
     root = tree.getroot()
 
     for activity in root.iter('activity'):

@@ -3,7 +3,6 @@ from emulator import Emulator
 import api_commands
 from apk import Apk
 import emulator_manager
-from xml.dom import minidom  # type: ignore
 from xml_element import XML_Element
 from adb_settings import AdbSettings
 from telnet_connector import TelnetAdb
@@ -16,6 +15,7 @@ import monkey
 from adb_logcat import Logcat, TestType
 import mutex
 import secrets
+import defusedxml.minidom
 
 dir = os.path.dirname(__file__)
 eventFile = os.path.join(dir, 'test/EventLog')
@@ -250,7 +250,7 @@ def input_key_event(activity: str, item: XML_Element,
 
 
 def get_elements_list(emulator: Emulator, adb_settings: AdbSettings) -> List:
-    xmldoc = minidom.parse(api_commands.adb_uiautomator_dump(emulator))
+    xmldoc = defusedxml.minidom.parse(api_commands.adb_uiautomator_dump(emulator))
     element_list = []
     itemlist = xmldoc.getElementsByTagName('node')
     for s in itemlist:
