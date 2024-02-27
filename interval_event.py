@@ -67,7 +67,7 @@ def read_interval_event_from_file(file_address: str,
     total_event_duration: int = 0
     for line in lines:
         in_values = line.split(',')
-        if len(in_values) is 3:
+        if len(in_values) == 3:
             try:
                 event_value = int(in_values[0])
                 event_interval = int(in_values[1])

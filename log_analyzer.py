@@ -64,7 +64,7 @@ class Log():
             self.log_tag = None
             self.log_message = None
             return None
-        if mode is 1:
+        if mode == 1:
             try:
                 self.log_pid = log_line_split[3]
                 self.log_tid = log_line_split[5]
@@ -79,7 +79,7 @@ class Log():
                 self.log_tag = None
                 self.log_message = None
                 return None
-        if mode is 2:
+        if mode == 2:
             log_line_split = log_line.split(' ', maxsplit=6)
             self.log_pid = log_line_split[2]
             self.log_tid = log_line_split[3]
@@ -156,7 +156,7 @@ class Analyzer():
         for line in self.file_contents:
             if len(line) < 1:
                 continue
-            if mode is 1:
+            if mode == 1:
                 log_list.append(Log(line, mode))
             else:
                 log_list.append(Log(line, 2))
@@ -235,13 +235,13 @@ class Analyzer():
                 continue
             # print(log.log_message)
 
-            if log.log_priority is 'E':
+            if log.log_priority == 'E':
                 self.unique_errors.add(log.log_message)
                 self.all_errors.append(log.log_message)
-            if log.log_priority is 'W':
+            if log.log_priority == 'W':
                 self.unique_warnings.add(log.log_message)
                 self.all_warnings.append(log.log_message)
-            if log.log_priority is 'F':
+            if log.log_priority == 'F':
                 self.unique_fatals.add(log.log_message)
                 self.all_fatals.append(log.log_message)
         self.count_unique_errors = len(self.unique_errors)
