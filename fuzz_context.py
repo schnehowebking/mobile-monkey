@@ -269,51 +269,48 @@ class Fuzzer:
 
     def __execute_interval_event(self, method_name,
                                  interval_events: List[IntervalEvent]):
-        # util.debug_print("Execution: ", interval_events, flag=PRINT_FLAG)
+        with open(StopFlagWatcher, 'r') as file:
+            for interval_event in interval_events:
 
-        # file = open('test/StopFlagWatcher', 'r')
-        file = open(StopFlagWatcher, 'r')
-        for interval_event in interval_events:
+                if "1" in file.readline(1):
+                    print("Contextual event finished")
+                    break
 
-            if "1" in file.readline(1):
-                print("Contextual event finished")
-                break
+                if self.fatal_watcher.has_fatal_exception_watch():
+                    print("Fatal Exception Detected. Breaking from " +
+                          interval_event.event_type.__name__)
+                    break
 
-            if self.fatal_watcher.has_fatal_exception_watch():
-                print("Fatal Exception Detected. Breaking from " +
-                      interval_event.event_type.__name__)
-                break
+                # if self.fatal_exception:
+                #     print("fatal crash. Stopping " +
+                #           interval_event.event_type.__name__)
+                #     break
+                # util.debug_print(interval_event, flag=PRINT_FLAG)
 
-            # if self.fatal_exception:
-            #     print("fatal crash. Stopping " +
-            #           interval_event.event_type.__name__)
-            #     break
-            # util.debug_print(interval_event, flag=PRINT_FLAG)
+                print(interval_event)
 
-            print(interval_event)
+                # file2 = open("test/ContextEventLog", 'r')
+                file2 = open(ContextEventLog, 'r')
+                filedata = file2.read()
 
-            # file2 = open("test/ContextEventLog", 'r')
-            file2 = open(ContextEventLog, 'r')
-            filedata = file2.read()
+                # file2 = open("test/ContextEventLog", "w")
+                file2 = open(ContextEventLog, 'w')
+                if len(filedata) < 10:
+                    file2.write(IntervalEvent.__str__(interval_event))
+                else:
+                    file2.write(filedata + "\n" +
+                                IntervalEvent.__str__(interval_event))
 
-            # file2 = open("test/ContextEventLog", "w")
-            file2 = open(ContextEventLog, 'w')
-            if len(filedata) < 10:
-                file2.write(IntervalEvent.__str__(interval_event))
-            else:
-                file2.write(filedata + "\n" +
-                            IntervalEvent.__str__(interval_event))
+                file2.close()
 
-            file2.close()
-
-            method_name(interval_event.event_type[interval_event.event])
-            time.sleep(interval_event.interval)
-            # for i in range(0, len(intervals) - 1):
-            #     if PRINT_FLAG:
-            #         print("{} - {}: {}".format(event_type,
-            #                                    intervals[i], enum_type(events[i]).name))# noqa
-            #     method_name(enum_type(events[i]))
-            #     time.sleep(intervals[i])
+                method_name(interval_event.event_type[interval_event.event])
+                time.sleep(interval_event.interval)
+                # for i in range(0, len(intervals) - 1):
+                #     if PRINT_FLAG:
+                #         print("{} - {}: {}".format(event_type,
+                #                                    intervals[i], enum_type(events[i]).name))# noqa
+                #     method_name(enum_type(events[i]))
+                #     time.sleep(intervals[i])
 
     def random_airplane_mode_call(self, adb_device: str,
                                   interval_events: List[IntervalEvent] = None):
@@ -355,54 +352,45 @@ class Fuzzer:
         device = AdbSettings(adb_device)
         if interval_events is None:
             interval_events = self.generate_step_interval_event(UserRotation)
-        # self.__interval_event_execution(
-        #     device.set_user_rotation, "rotation_mode",
-        #     self.rotation_interval, self.rotation_events, UserRotation)
-        # util.debug_print(interval_events, flag=PRINT_FLAG)
+        with open(StopFlagWatcher, 'r') as file:
+            for interval_event in interval_events:
 
-        # self.__execute_interval_event(
-        #     device.set_user_rotation, interval_events)
-        # device.set_user_rotation(UserRotation.ROTATION_POTRAIT)
-        # file = open('test/StopFlagWatcher', 'r')
-        file = open(StopFlagWatcher, 'r')
-        for interval_event in interval_events:
+                if "1" in file.readline(1):
+                    print("Contextual event finished")
+                    break
 
-            if "1" in file.readline(1):
-                print("Contextual event finished")
-                break
+                if self.fatal_watcher.has_fatal_exception_watch():
+                    print("Fatal Exception Detected. Breaking from " +
+                          interval_event.event_type.__name__)
+                    break
 
-            if self.fatal_watcher.has_fatal_exception_watch():
-                print("Fatal Exception Detected. Breaking from " +
-                      interval_event.event_type.__name__)
-                break
+                # if self.fatal_exception:
+                #     print("fatal crash. Stopping " +
+                #           interval_event.event_type.__name__)
+                #     break
+                # util.debug_print(interval_event, flag=PRINT_FLAG)
 
-            # if self.fatal_exception:
-            #     print("fatal crash. Stopping " +
-            #           interval_event.event_type.__name__)
-            #     break
-            # util.debug_print(interval_event, flag=PRINT_FLAG)
+                print(interval_event)
 
-            print(interval_event)
+                file2 = open(ContextEventLog, 'r')
+                filedata = file2.read()
 
-            file2 = open(ContextEventLog, 'r')
-            filedata = file2.read()
+                file2 = open(ContextEventLog, "w")
 
-            file2 = open(ContextEventLog, "w")
+                if len(filedata) < 10:
+                    file2.write(IntervalEvent.__str__(interval_event))
+                else:
+                    file2.write(filedata + "\n" +
+                                IntervalEvent.__str__(interval_event))
 
-            if len(filedata) < 10:
-                file2.write(IntervalEvent.__str__(interval_event))
-            else:
-                file2.write(filedata + "\n" +
-                            IntervalEvent.__str__(interval_event))
+                file2.close()
 
-            file2.close()
-
-            device.set_user_rotation(
-                interval_event.event_type[interval_event.event])
-            print("testing rotation manual service")
-            mutex.ROTATION_MUTEX = 1
-            print("ROTATION_MUTEX set to 1 for forcing update")
-            time.sleep(interval_event.interval)
+                device.set_user_rotation(
+                    interval_event.event_type[interval_event.event])
+                print("testing rotation manual service")
+                mutex.ROTATION_MUTEX = 1
+                print("ROTATION_MUTEX set to 1 for forcing update")
+                time.sleep(interval_event.interval)
 
         # device.set_user_rotation(UserRotation.ROTATION_POTRAIT)
 

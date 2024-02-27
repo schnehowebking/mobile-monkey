@@ -20,8 +20,8 @@ import secrets
 dir = os.path.dirname(__file__)
 eventFile = os.path.join(dir, 'test/EventLog')
 StopFlagWatcher = os.path.join(dir, 'test/StopFlagWatcher')
-
-eventlog = open(eventFile, 'w')
+with open(eventFile, 'w') as eventlog:
+    pass
 
 
 def reset_emulator(
@@ -192,22 +192,20 @@ def force_update_element_list(emulator: Emulator, adb_settings: AdbSettings):
 
 def test_ui(activity: str, emulator: Emulator, adb_settings: AdbSettings,
             display_height: str):
+    with open(StopFlagWatcher, 'w') as file:
+        file.truncate()
 
-    # file = open('test/StopFlagWatcher', 'w')
-    file = open(StopFlagWatcher, 'w')
-    file.truncate()
-
-    element_list = get_elements_list(emulator, adb_settings)
-
-    while len(element_list) > 0:
-        traverse_elements(activity, element_list, emulator, adb_settings)
-        previous_elements = element_list
-        api_commands.adb_display_scroll("{}".format(
-            int(display_height) - int(display_height) / 10))
         element_list = get_elements_list(emulator, adb_settings)
-        element_list = element_list_compare(previous_elements, element_list)
 
-    file.write("1")
+        while len(element_list) > 0:
+            traverse_elements(activity, element_list, emulator, adb_settings)
+            previous_elements = element_list
+            api_commands.adb_display_scroll("{}".format(
+                int(display_height) - int(display_height) / 10))
+            element_list = get_elements_list(emulator, adb_settings)
+            element_list = element_list_compare(previous_elements, element_list)
+
+        file.write("1")
 
 
 def element_list_compare(previous_elements: List[XML_Element],
